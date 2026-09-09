@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BINARY MISSION 🚀 - Pecahkan Kode Biner</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Orbitron & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        tech: ['Orbitron', 'monospace'],
+                    },
+                    colors: {
+                        space: {
+                            900: '#0B0F19',
+                            800: '#111827',
+                            700: '#1F2937',
+                            border: '#374151'
+                        },
+                        neon: {
+                            cyan: '#00F0FF',
+                            purple: '#A855F7',
+                            green: '#22C55E',
+                            yellow: '#EAB308',
+                            orange: '#F97316',
+                            pink: '#EC4899'
+                        }
+                    },
+                    boxShadow: {
+                        'glow-cyan': '0 0 20px rgba(0, 240, 255, 0.4)',
+                        'glow-purple': '0 0 20px rgba(168, 85, 247, 0.4)',
+                        'glow-green': '0 0 20px rgba(34, 197, 94, 0.4)',
+                        'glow-orange': '0 0 20px rgba(249, 115, 22, 0.4)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Keyframe Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
+        @keyframes space-bg {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .animate-pulse-glow { animation: pulse-glow 2s infinite; }
+        
+        .space-bg {
+            background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0b0f19 70%);
+            background-size: 200% 200%;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00F0FF;
+        }
+    </style>
+</head>
+<body class="space-bg text-gray-100 min-h-screen font-sans antialiased selection:bg-neon-cyan selection:text-space-900 overflow-x-hidden flex flex-col justify-between">
+
+    <header class="w-full max-w-6xl mx-auto px-4 py-4 flex justify-between items-center z-50">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('splash')">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center text-xl shadow-glow-cyan animate-pulse">
+                🚀
+            </div>
+            <div>
+                <h1 class="font-tech font-bold text-lg md:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-white to-neon-purple">
+                    BINARY MISSION
+                </h1>
+                <p class="text-xs text-gray-400 font-medium hidden sm:block">SMP Kelas 8 • Informatika</p>
+            </div>
+        </div>
+
+        <!-- Global Status Bar & Navigation controls -->
+        <div class="flex items-center space-x-3">
+            <div id="topScoreContainer" class="hidden glass-card px-4 py-2 rounded-xl flex items-center space-x-2 border border-neon-yellow/30 shadow-glow-orange">
+                <i class="fa-solid fa-trophy text-neon-yellow text-lg"></i>
+                <span class="text-xs uppercase text-gray-400 font-bold hidden sm:inline">SKOR:</span>
+                <span id="globalScoreText" class="font-tech text-neon-yellow font-extrabold text-lg">0</span>
+            </div>
+
+            <button onclick="toggleAudio()" id="audioBtn" class="p-2.5 rounded-xl glass-card hover:border-neon-cyan transition text-gray-300 hover:text-white" title="Suara On/Off">
+                <i id="audioIcon" class="fa-solid fa-volume-high text-lg"></i>
+            </button>
+
+            <button id="homeNavBtn" onclick="navigateTo('menu')" class="hidden px-3 py-2 rounded-xl glass-card hover:border-neon-cyan transition text-sm font-semibold flex items-center space-x-1.5">
+                <i class="fa-solid fa-house text-neon-cyan"></i>
+                <span class="hidden md:inline">Menu</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl mx-auto px-4 py-2 flex-grow flex flex-col justify-center relative z-10">
+        
+        <!-- ================= HALAMAN 1: SPLASH SCREEN ================= -->
+        <section id="splashScreen" class="w-full py-8 flex flex-col items-center text-center relative">
+            <!-- Floating Binary Decorations -->
+            <div class="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
+                <span class="absolute top-10 left-10 font-tech text-4xl text-neon-cyan animate-float" style="animation-delay: 0s;">10101</span>
+                <span class="absolute top-1/3 right-12 font-tech text-5xl text-neon-purple animate-float" style="animation-delay: 1s;">01100</span>
+                <span class="absolute bottom-10 left-1/4 font-tech text-3xl text-neon-green animate-float" style="animation-delay: 2s;">11110000</span>
+                <span class="absolute bottom-1/4 right-1/3 font-tech text-4xl text-neon-yellow animate-float" style="animation-delay: 1.5s;">00001101</span>
+            </div>
+
+            <div class="inline-block p-2 px-4 rounded-full glass-card border-neon-cyan/40 text-neon-cyan text-xs font-bold tracking-widest uppercase mb-6 shadow-glow-cyan">
+                ✨ Game Edukasi Informatika Kelas 8
+            </div>
+
+            <h1 class="font-tech text-4xl md:text-6xl font-black tracking-tight text-white mb-4 leading-tight">
+                BINARY MISSION <span class="inline-block animate-bounce">🚀</span>
+            </h1>
+
+            <p class="text-xl md:text-2xl font-bold text-neon-cyan mb-3">
+                “Pecahkan Kode Biner, Selesaikan Misi!”
+            </p>
+
+            <p class="text-gray-300 max-w-lg mb-8 text-sm md:text-base leading-relaxed">
+                Belajar konversi bilangan biner & desimal dengan kartu interaktif, tantangan seru, dan strategi matematika luar angkasa!
+            </p>
+
+            <div class="w-full max-w-xs space-y-4">
+                <button onclick="startGameSequence()" class="w-full py-4 px-8 rounded-2xl bg-gradient-to-r from-neon-cyan via-blue-600 to-neon-purple text-space-900 font-tech font-extrabold text-xl shadow-glow-cyan hover:scale-105 active:scale-95 transition duration-200 flex items-center justify-center space-x-3">
+                    <i class="fa-solid fa-play text-2xl"></i>
+                    <span>MULAI MISI</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= HALAMAN 2: MENU UTAMA ================= -->
+        <section id="menuScreen" class="hidden w-full py-6">
+            <div class="text-center mb-8">
+                <h2 class="font-tech text-3xl md:text-4xl font-extrabold text-white">DASHBOARD MISI</h2>
+                <p class="text-gray-400 text-sm mt-1">Pilih menu di bawah ini untuk memulai pembelajaran</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto">
+                <!-- Button Start Game -->
+                <div onclick="navigateTo('level1')" class="glass-card hover:border-neon-cyan rounded-2xl p-6 transition duration-300 cursor-pointer hover:-translate-y-1 group shadow-lg flex flex-col justify-between border-neon-cyan/30">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-neon-cyan/10 text-neon-cyan flex items-center justify-center text-2xl group-hover:bg-neon-cyan group-hover:text-space-900 transition">
+                            🚀
+                        </div>
+                        <span class="text-xs font-bold text-neon-cyan uppercase font-tech">Tantangan Utama</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white group-hover:text-neon-cyan transition">MULAI GAME</h3>
+                        <p class="text-xs text-gray-400 mt-2 leading-relaxed">Mainkan Level 1 hingga 3, selesaikan misi konversi dan kumpulkan skor tertinggi!</p>
+                    </div>
+                </div>
+
+                <!-- Button Cara Bermain -->
+                <div onclick="navigateTo('tutorial')" class="glass-card hover:border-neon-purple rounded-2xl p-6 transition duration-300 cursor-pointer hover:-translate-y-1 group shadow-lg flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-neon-purple/10 text-neon-purple flex items-center justify-center text-2xl group-hover:bg-neon-purple group-hover:text-space-900 transition">
+                            📖
+                        </div>
+                        <span class="text-xs font-bold text-neon-purple uppercase font-tech">Tutorial</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white group-hover:text-neon-purple transition">CARA BERMAIN</h3>
+                        <p class="text-xs text-gray-400 mt-2 leading-relaxed">Pelajari 4 langkah mudah memahami nilai kartu biner 128 hingga 1.</p>
+                    </div>
+                </div>
+
+                <!-- Button Kartu Biner Interactive -->
+                <div onclick="navigateTo('sandbox')" class="glass-card hover:border-neon-green rounded-2xl p-6 transition duration-300 cursor-pointer hover:-translate-y-1 group shadow-lg flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-neon-green/10 text-neon-green flex items-center justify-center text-2xl group-hover:bg-neon-green group-hover:text-space-900 transition">
+                            🃏
+                        </div>
+                        <span class="text-xs font-bold text-neon-green uppercase font-tech">Eksplorasi</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white group-hover:text-neon-green transition">KARTU BINER</h3>
+                        <p class="text-xs text-gray-400 mt-2 leading-relaxed">Uji coba interaktif kartu biner 8-bit secara bebas tanpa batas waktu.</p>
+                    </div>
+                </div>
+
+                <!-- Button Papan Skor -->
+                <div onclick="navigateTo('leaderboard')" class="glass-card hover:border-neon-yellow rounded-2xl p-6 transition duration-300 cursor-pointer hover:-translate-y-1 group shadow-lg flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-neon-yellow/10 text-neon-yellow flex items-center justify-center text-2xl group-hover:bg-neon-yellow group-hover:text-space-900 transition">
+                            🏆
+                        </div>
+                        <span class="text-xs font-bold text-neon-yellow uppercase font-tech">Peringkat</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white group-hover:text-neon-yellow transition">PAPAN SKOR</h3>
+                        <p class="text-xs text-gray-400 mt-2 leading-relaxed">Lihat daftar nilai terbaik kelompok/siswa di kelasmu.</p>
+                    </div>
+                </div>
+
+                <!-- Button Kartu Tantangan Modifier -->
+                <div onclick="navigateTo('challenges')" class="glass-card hover:border-neon-orange rounded-2xl p-6 transition duration-300 cursor-pointer hover:-translate-y-1 group shadow-lg flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-neon-orange/10 text-neon-orange flex items-center justify-center text-2xl group-hover:bg-neon-orange group-hover:text-space-900 transition">
+                            ⚡
+                        </div>
+                        <span class="text-xs font-bold text-neon-orange uppercase font-tech">Kartu Spesial</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white group-hover:text-neon-orange transition">KARTU TANTANGAN</h3>
+                        <p class="text-xs text-gray-400 mt-2 leading-relaxed">Fitur kartu tantangan taktis seperti Speed, Double Point, & Trap!</p>
+                    </div>
+                </div>
+
+                <!-- Button Pengaturan -->
+                <div onclick="navigateTo('settings')" class="glass-card hover:border-gray-400 rounded-2xl p-6 transition duration-300 cursor-pointer hover:-translate-y-1 group shadow-lg flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gray-700/30 text-gray-300 flex items-center justify-center text-2xl group-hover:bg-gray-300 group-hover:text-space-900 transition">
+                            ⚙️
+                        </div>
+                        <span class="text-xs font-bold text-gray-400 uppercase font-tech">Opsi</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white group-hover:text-gray-300 transition">PENGATURAN</h3>
+                        <p class="text-xs text-gray-400 mt-2 leading-relaxed">Atur nama pemain/kelompok, riset data skor, dan volume suara.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= HALAMAN 3: CARA BERMAIN ================= -->
+        <section id="tutorialScreen" class="hidden w-full py-4">
+            <div class="glass-card rounded-3xl p-6 md:p-8 max-w-3xl mx-auto border-neon-purple/40 shadow-glow-purple">
+                <div class="flex items-center justify-between border-b border-gray-700 pb-4 mb-6">
+                    <h2 class="font-tech text-2xl md:text-3xl font-bold text-neon-purple flex items-center space-x-3">
+                        <span>📖 CARA BERMAIN</span>
+                    </h2>
+                    <span class="text-xs text-gray-400 font-mono">Panduan Ringkas</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <!-- Langkah 1 -->
+                    <div class="bg-space-800/80 p-4 rounded-2xl border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="w-8 h-8 rounded-full bg-neon-purple text-space-900 font-bold font-tech flex items-center justify-center text-sm">1</span>
+                            <h4 class="font-bold text-white text-sm">Kenali Nilai Kartu Biner</h4>
+                        </div>
+                        <p class="text-xs text-gray-300 mb-2">Setiap posisi kartu memiliki nilai basis 2 berpangkat (8-bit):</p>
+                        <div class="grid grid-cols-4 gap-1 text-center font-tech text-xs font-bold text-neon-cyan bg-space-900 p-2 rounded-xl">
+                            <span>128</span><span>64</span><span>32</span><span>16</span>
+                            <span>8</span><span>4</span><span>2</span><span>1</span>
+                        </div>
+                    </div>
+
+                    <!-- Langkah 2 -->
+                    <div class="bg-space-800/80 p-4 rounded-2xl border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="w-8 h-8 rounded-full bg-neon-purple text-space-900 font-bold font-tech flex items-center justify-center text-sm">2</span>
+                            <h4 class="font-bold text-white text-sm">Pilih Kartu yang Digunakan</h4>
+                        </div>
+                        <p class="text-xs text-gray-300">
+                            Kartu aktif bernilai <span class="text-neon-green font-bold">1</span> (digunakan), dan kartu non-aktif bernilai <span class="text-red-400 font-bold">0</span> (tidak digunakan).
+                        </p>
+                    </div>
+
+                    <!-- Langkah 3 -->
+                    <div class="bg-space-800/80 p-4 rounded-2xl border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="w-8 h-8 rounded-full bg-neon-purple text-space-900 font-bold font-tech flex items-center justify-center text-sm">3</span>
+                            <h4 class="font-bold text-white text-sm">Jumlahkan Nilai Kartu</h4>
+                        </div>
+                        <p class="text-xs text-gray-300">
+                            Tambahkan semua angka pada kartu yang bernilai <span class="text-neon-green font-bold">1</span> untuk memperoleh total nilai Desimal.
+                        </p>
+                    </div>
+
+                    <!-- Langkah 4 -->
+                    <div class="bg-space-800/80 p-4 rounded-2xl border border-gray-700">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="w-8 h-8 rounded-full bg-neon-purple text-space-900 font-bold font-tech flex items-center justify-center text-sm">4</span>
+                            <h4 class="font-bold text-white text-sm">Tentukan Bilangan Biner</h4>
+                        </div>
+                        <p class="text-xs text-gray-300">
+                            Tulis urutan angka 1 dan 0 dari kiri (128) ke kanan (1).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Contoh Pembelajaran -->
+                <div class="bg-neon-purple/10 border border-neon-purple/30 rounded-2xl p-4 mb-6">
+                    <h5 class="font-bold text-neon-purple text-sm mb-2 flex items-center space-x-2">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        <span>Contoh Kasus: Angka 13</span>
+                    </h5>
+                    <p class="text-xs text-gray-200 leading-relaxed">
+                        Untuk membentuk nilai desimal <span class="font-bold text-neon-yellow">13</span>, kita gunakan kartu: <span class="font-tech font-bold text-neon-cyan">8 + 4 + 1 = 13</span>.
+                        <br>
+                        Kartu yang AKTIF (1): 8, 4, dan 1. Lainnya TIDAK AKTIF (0).
+                        <br>
+                        Sehingga biner 13 adalah: <span class="font-tech font-bold text-neon-green text-sm tracking-widest">00001101</span>
+                    </p>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button onclick="navigateTo('menu')" class="px-5 py-2.5 rounded-xl bg-space-700 hover:bg-space-800 text-gray-300 font-semibold text-sm transition">
+                        ← Kembali
+                    </button>
+                    <button onclick="navigateTo('sandbox')" class="px-6 py-3 rounded-xl bg-neon-purple hover:bg-purple-600 text-space-900 font-tech font-bold text-sm shadow-glow-purple transition flex items-center space-x-2">
+                        <span>SAYA SIAP 🚀</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= HALAMAN 4: KARTU BINER INTERAKTIF (SANDBOX) ================= -->
+        <section id="sandboxScreen" class="hidden w-full py-4">
+            <div class="text-center mb-6">
+                <div class="inline-block px-3 py-1 rounded-full bg-neon-green/10 text-neon-green text-xs font-bold font-tech mb-2">EKSPLORASI BEBAS</div>
+                <h2 class="font-tech text-3xl font-extrabold text-white">🃏 KARTU BINER INTERAKTIF</h2>
+                <p class="text-gray-400 text-xs md:text-sm mt-1">Klik kartu untuk mengubah status antara 1 (Aktif) dan 0 (Tidak Aktif)</p>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 max-w-4xl mx-auto border-neon-green/30 shadow-glow-green">
+                
+                <!-- Dynamic 8 Cards Grid -->
+                <div id="sandboxCardsContainer" class="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-3 mb-8">
+                    <!-- Cards injected by JavaScript -->
+                </div>
+
+                <!-- Live Results Box -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-space-900/90 p-5 rounded-2xl border border-gray-700">
+                    <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-space-800 border border-gray-700/50">
+                        <span class="text-xs text-gray-400 font-bold uppercase mb-1">Total Nilai Desimal</span>
+                        <span id="sandboxDecimalText" class="font-tech text-3xl font-black text-neon-yellow">0</span>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-space-800 border border-gray-700/50">
+                        <span class="text-xs text-gray-400 font-bold uppercase mb-1">Bilangan Biner (8-bit)</span>
+                        <span id="sandboxBinaryText" class="font-tech text-2xl sm:text-3xl font-black text-neon-cyan tracking-widest">00000000</span>
+                    </div>
+                </div>
+
+                <!-- Explanation Breakdown -->
+                <div class="mt-4 p-4 rounded-xl bg-space-800/60 border border-gray-700 text-xs text-gray-300">
+                    <span class="font-bold text-neon-green">Penjelasan Matematis:</span>
+                    <p id="sandboxMathBreakdown" class="mt-1 font-mono text-gray-300">
+                        Semua kartu tidak aktif: 0 + 0 + 0 + 0 + 0 + 0 + 0 + 0 = 0
+                    </p>
+                </div>
+
+                <div class="mt-6 flex justify-between items-center">
+                    <button onclick="navigateTo('menu')" class="px-5 py-2.5 rounded-xl bg-space-700 hover:bg-space-800 text-gray-300 font-semibold text-sm transition">
+                        🏠 Menu Utama
+                    </button>
+                    <button onclick="navigateTo('level1')" class="px-6 py-3 rounded-xl bg-neon-cyan hover:bg-cyan-400 text-space-900 font-tech font-bold text-sm shadow-glow-cyan transition">
+                        LANJUT KE LEVEL 1 🚀
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= LEVEL 1 — SUSUN KARTU ================= -->
+        <section id="level1Screen" class="hidden w-full py-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="text-xs font-tech font-bold text-neon-cyan uppercase">LEVEL 1 DAFTAR MISI</span>
+                        <h2 class="font-tech text-2xl md:text-3xl font-black text-white">🚀 SUSUN KARTU BINER</h2>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-gray-400 font-mono">Soal <span id="l1QuestionIndex">1</span> dari 3</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-3xl p-6 border-neon-cyan/40 shadow-glow-cyan mb-6">
+                    <p class="text-xs md:text-sm text-gray-300 mb-4">
+                        <i class="fa-solid fa-circle-info text-neon-cyan mr-1"></i>
+                        Gunakan kartu biner untuk membentuk bilangan desimal target di bawah ini:
+                    </p>
+
+                    <!-- Target Display Box -->
+                    <div class="bg-gradient-to-r from-space-900 via-space-800 to-space-900 p-4 rounded-2xl border border-neon-cyan/50 text-center mb-6">
+                        <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">TARGET DESIMAL</span>
+                        <div class="font-tech text-4xl md:text-5xl font-black text-neon-yellow my-1" id="l1TargetNumber">13</div>
+                        <div class="text-xs text-neon-cyan font-mono" id="l1TargetHint">Pilih kartu yang jika dijumlahkan bernilai 13</div>
+                    </div>
+
+                    <!-- Interactive Bit Cards -->
+                    <div id="l1CardsContainer" class="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-3 mb-6">
+                        <!-- Bit Cards dynamic -->
+                    </div>
+
+                    <!-- Selected Cards Summary Area -->
+                    <div class="bg-space-900/80 p-4 rounded-2xl border border-gray-700 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between text-xs sm:text-sm">
+                            <span class="font-bold text-gray-300">KARTU YANG DIPILIH:</span>
+                            <div id="l1SelectedCardsList" class="flex flex-wrap gap-1.5 font-tech font-bold text-neon-cyan">
+                                <!-- Example: [ 8 ] [ 4 ] [ 1 ] -->
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between text-xs sm:text-sm pt-2 border-t border-gray-800">
+                            <span class="font-bold text-gray-300">PENJUMLAHAN:</span>
+                            <span id="l1SumFormula" class="font-mono text-neon-yellow font-bold">0 = 0</span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between text-xs sm:text-sm pt-2 border-t border-gray-800">
+                            <span class="font-bold text-gray-300">BILANGAN BINER:</span>
+                            <span id="l1BinaryOutput" class="font-tech text-lg font-black text-neon-green tracking-widest">00000000</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 flex flex-wrap gap-3 justify-between items-center">
+                        <button onclick="showHelpModalLevel1()" class="px-4 py-2.5 rounded-xl bg-yellow-500/10 hover:bg-yellow-500/20 text-neon-yellow border border-neon-yellow/40 font-semibold text-xs transition flex items-center space-x-2">
+                            <span>💡 BANTUAN</span>
+                        </button>
+
+                        <div class="flex space-x-3">
+                            <button onclick="resetLevel1Cards()" class="px-4 py-2.5 rounded-xl bg-space-700 hover:bg-space-800 text-gray-300 font-semibold text-xs transition">
+                                🔄 Reset
+                            </button>
+                            <button onclick="checkLevel1Answer()" class="px-6 py-2.5 rounded-xl bg-neon-green hover:bg-green-500 text-space-900 font-tech font-bold text-sm shadow-glow-green transition flex items-center space-x-2">
+                                <span>✅ CEK JAWABAN</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Area Level 1 -->
+                <div id="l1FeedbackBox" class="hidden glass-card rounded-2xl p-5 border-neon-green bg-neon-green/10 mb-6">
+                    <div class="flex items-start space-x-3">
+                        <div id="l1FeedbackIcon" class="text-3xl">🎉</div>
+                        <div>
+                            <h4 id="l1FeedbackTitle" class="font-bold text-lg text-white">BENAR!</h4>
+                            <p id="l1FeedbackBody" class="text-xs sm:text-sm text-gray-200 mt-1 font-mono"></p>
+                            <div class="mt-3 flex items-center space-x-3">
+                                <span id="l1ScoreEarned" class="px-3 py-1 rounded-full bg-neon-yellow text-space-900 font-tech font-bold text-xs">⭐ +10 POIN</span>
+                                <button onclick="nextLevel1Question()" class="px-4 py-1.5 rounded-xl bg-neon-cyan text-space-900 font-tech font-bold text-xs hover:bg-cyan-300 transition">
+                                    SOAL SELANJUTNYA ➔
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= LEVEL 2 — TEBAK BINER ================= -->
+        <section id="level2Screen" class="hidden w-full py-4">
+            <div class="max-w-3xl mx-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="text-xs font-tech font-bold text-neon-purple uppercase">LEVEL 2 DAFTAR MISI</span>
+                        <h2 class="font-tech text-2xl md:text-3xl font-black text-white">🚀 TEBAK BINER KE DESIMAL</h2>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-gray-400 font-mono">Soal <span id="l2QuestionIndex">1</span> dari 3</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-3xl p-6 border-neon-purple/40 shadow-glow-purple mb-6">
+                    <p class="text-xs md:text-sm text-gray-300 mb-4">
+                        <i class="fa-solid fa-circle-info text-neon-purple mr-1"></i>
+                        Ubah kode biner berikut menjadi bilangan desimal yang tepat:
+                    </p>
+
+                    <!-- Binary Target Box -->
+                    <div class="bg-gradient-to-r from-space-900 via-space-800 to-space-900 p-6 rounded-2xl border border-neon-purple/50 text-center mb-6">
+                        <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">KODE BINER:</span>
+                        <div id="l2BinaryTarget" class="font-tech text-4xl sm:text-5xl font-black text-neon-cyan tracking-widest my-2">101101</div>
+                        <p class="text-xs text-gray-400">Berapakah nilai desimalnya?</p>
+                    </div>
+
+                    <!-- Input Answer Box -->
+                    <div class="max-w-xs mx-auto mb-6">
+                        <label class="block text-xs text-gray-300 mb-2 font-bold text-center">MASUKKAN JAWABAN DESIMAL:</label>
+                        <input type="number" id="l2InputAnswer" placeholder="Contoh: 45" class="w-full text-center font-tech text-2xl py-3 px-4 rounded-xl bg-space-900 border-2 border-neon-purple focus:border-neon-cyan focus:outline-none text-neon-yellow">
+                    </div>
+
+                    <!-- Helper Toggle Card Reference -->
+                    <div class="mb-6">
+                        <button onclick="toggleL2HelperCards()" class="w-full py-2 px-3 rounded-xl bg-space-800 hover:bg-space-700 text-neon-purple text-xs font-bold transition flex items-center justify-center space-x-2 border border-gray-700">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span id="l2HelperToggleText">💡 Tampilkan Referensi Kartu Biner</span>
+                        </button>
+                        
+                        <div id="l2HelperCardsBox" class="hidden mt-3 p-3 bg-space-900/90 rounded-2xl border border-gray-700">
+                            <div class="grid grid-cols-8 gap-1 text-center font-tech text-xs font-bold">
+                                <div class="p-1 rounded bg-space-800 text-gray-400">128</div>
+                                <div class="p-1 rounded bg-space-800 text-gray-400">64</div>
+                                <div class="p-1 rounded bg-space-800 text-neon-cyan">32</div>
+                                <div class="p-1 rounded bg-space-800 text-gray-400">16</div>
+                                <div class="p-1 rounded bg-space-800 text-neon-cyan">8</div>
+                                <div class="p-1 rounded bg-space-800 text-neon-cyan">4</div>
+                                <div class="p-1 rounded bg-space-800 text-gray-400">2</div>
+                                <div class="p-1 rounded bg-space-800 text-neon-cyan">1</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex justify-between items-center">
+                        <button onclick="navigateTo('menu')" class="px-4 py-2 rounded-xl bg-space-700 hover:bg-space-800 text-gray-300 font-semibold text-xs transition">
+                            🏠 Menu
+                        </button>
+                        <button onclick="checkLevel2Answer()" class="px-6 py-3 rounded-xl bg-neon-purple hover:bg-purple-600 text-space-900 font-tech font-bold text-sm shadow-glow-purple transition">
+                            ✅ JAWAB MISI
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Feedback Area Level 2 -->
+                <div id="l2FeedbackBox" class="hidden glass-card rounded-2xl p-5 border-neon-purple bg-neon-purple/10 mb-6">
+                    <div class="flex items-start space-x-3">
+                        <div id="l2FeedbackIcon" class="text-3xl">🎉</div>
+                        <div>
+                            <h4 id="l2FeedbackTitle" class="font-bold text-lg text-white">HEBAT!</h4>
+                            <p id="l2FeedbackBody" class="text-xs sm:text-sm text-gray-200 mt-1 font-mono"></p>
+                            <div class="mt-3 flex items-center space-x-3">
+                                <span id="l2ScoreEarned" class="px-3 py-1 rounded-full bg-neon-yellow text-space-900 font-tech font-bold text-xs">⭐ +20 POIN</span>
+                                <button onclick="nextLevel2Question()" class="px-4 py-1.5 rounded-xl bg-neon-purple text-space-900 font-tech font-bold text-xs hover:bg-purple-300 transition">
+                                    SOAL SELANJUTNYA ➔
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= LEVEL 3 — BINARY BATTLE (TIME ATTACK) ================= -->
+        <section id="level3Screen" class="hidden w-full py-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="text-xs font-tech font-bold text-neon-orange uppercase">LEVEL 3 DAFTAR MISI</span>
+                        <h2 class="font-tech text-2xl md:text-3xl font-black text-white">🔥 BINARY BATTLE</h2>
+                    </div>
+                    <!-- Countdown Timer -->
+                    <div class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-red-950/80 border border-red-500 shadow-glow-orange animate-pulse">
+                        <i class="fa-solid fa-stopwatch text-red-400 text-xl"></i>
+                        <span id="l3TimerText" class="font-tech text-2xl font-black text-red-400">30S</span>
+                    </div>
+                </div>
+
+                <!-- Rocket Progress Bar Visual -->
+                <div class="glass-card rounded-2xl p-4 mb-6 border-neon-orange/40">
+                    <div class="flex justify-between text-xs text-gray-400 mb-1 font-tech font-bold">
+                        <span>PELUNCURAN ROKET MISI</span>
+                        <span id="l3ProgressText">0% KEMAJUAN</span>
+                    </div>
+                    <div class="w-full bg-space-900 h-4 rounded-full overflow-hidden p-0.5 border border-gray-700 relative">
+                        <div id="l3ProgressBar" class="bg-gradient-to-r from-neon-yellow via-neon-orange to-red-500 h-full rounded-full transition-all duration-300" style="width: 15%;"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-3xl p-6 border-neon-orange/40 shadow-glow-orange mb-6">
+                    <div class="bg-space-900 p-4 rounded-2xl border border-neon-orange/50 text-center mb-6">
+                        <span class="text-xs text-neon-orange font-bold uppercase tracking-wider">MISI CEPAT: UBAH DESIMAL KE BINER!</span>
+                        <div class="font-tech text-4xl sm:text-5xl font-black text-neon-yellow my-1" id="l3TargetNumber">73</div>
+                        <p class="text-xs text-gray-300">Pilih kartu biner yang tepat sebelum waktu habis!</p>
+                    </div>
+
+                    <!-- Cards Grid -->
+                    <div id="l3CardsContainer" class="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-3 mb-6">
+                        <!-- Bit cards dynamic -->
+                    </div>
+
+                    <!-- Formula Result -->
+                    <div class="bg-space-900/90 p-4 rounded-2xl border border-gray-700 flex flex-wrap justify-between items-center text-xs sm:text-sm">
+                        <div>
+                            <span class="text-gray-400">PENJUMLAHAN:</span>
+                            <span id="l3SumFormula" class="font-mono text-neon-yellow font-bold ml-2">0 = 0</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">HASIL BINER:</span>
+                            <span id="l3BinaryOutput" class="font-tech text-lg font-black text-neon-green tracking-widest ml-2">00000000</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-6 flex justify-between items-center">
+                        <button onclick="startLevel3Battle()" class="px-4 py-2 rounded-xl bg-space-700 hover:bg-space-800 text-gray-300 font-semibold text-xs">
+                            🔄 Ulangi Misi
+                        </button>
+                        <button onclick="checkLevel3Answer()" class="px-8 py-3 rounded-xl bg-gradient-to-r from-neon-orange to-red-600 text-space-900 font-tech font-extrabold text-sm shadow-glow-orange transition">
+                            🔥 KIRIM JAWABAN (+30 POIN)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= KARTU TANTANGAN (CHALLENGE CARDS) ================= -->
+        <section id="challengesScreen" class="hidden w-full py-4">
+            <div class="text-center mb-6">
+                <span class="text-xs font-tech font-bold text-neon-orange uppercase">KARTU SPESIAL MODIFIER</span>
+                <h2 class="font-tech text-3xl font-black text-white">⚡ KARTU TANTANGAN MISI</h2>
+                <p class="text-gray-400 text-xs md:text-sm mt-1">Kartu unik yang dapat digunakan guru atau kelompok saat bermain</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto mb-6">
+                <!-- Card 1 -->
+                <div class="glass-card rounded-2xl p-5 border-neon-cyan/40 hover:border-neon-cyan transition">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-neon-cyan/20 text-neon-cyan flex items-center justify-center font-bold text-xl">⚡</div>
+                        <h4 class="font-tech font-bold text-white text-base">SPEED</h4>
+                    </div>
+                    <p class="text-xs text-gray-300">“Jawab pertanyaan konversi biner dalam waktu kurang dari 20 detik!”</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card rounded-2xl p-5 border-neon-purple/40 hover:border-neon-purple transition">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-neon-purple/20 text-neon-purple flex items-center justify-center font-bold text-xl">🔄</div>
+                        <h4 class="font-tech font-bold text-white text-base">REVERSE</h4>
+                    </div>
+                    <p class="text-xs text-gray-300">“Kode biner diberikan terlebih dahulu, ubah menjadi bilangan desimal!”</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card rounded-2xl p-5 border-neon-yellow/40 hover:border-neon-yellow transition">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-neon-yellow/20 text-neon-yellow flex items-center justify-center font-bold text-xl">⭐</div>
+                        <h4 class="font-tech font-bold text-white text-base">DOUBLE POINT</h4>
+                    </div>
+                    <p class="text-xs text-gray-300">“Jawaban benar pada ronde ini mendapatkan tambahan bonus 2× poin!”</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="glass-card rounded-2xl p-5 border-neon-green/40 hover:border-neon-green transition">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-neon-green/20 text-neon-green flex items-center justify-center font-bold text-xl">🛡️</div>
+                        <h4 class="font-tech font-bold text-white text-base">SHIELD</h4>
+                    </div>
+                    <p class="text-xs text-gray-300">“Dapatkan tambahan waktu +15 detik ekstra pada Level 3!”</p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="glass-card rounded-2xl p-5 border-neon-pink/40 hover:border-neon-pink transition">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-neon-pink/20 text-neon-pink flex items-center justify-center font-bold text-xl">🎲</div>
+                        <h4 class="font-tech font-bold text-white text-base">RANDOM</h4>
+                    </div>
+                    <p class="text-xs text-gray-300">“Dapatkan soal desimal secara acak tingkat lanjut!”</p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="glass-card rounded-2xl p-5 border-red-500/40 hover:border-red-500 transition">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-xl">🚫</div>
+                        <h4 class="font-tech font-bold text-white text-base">TRAP</h4>
+                    </div>
+                    <p class="text-xs text-gray-300">“Satu nilai kartu biner acak dikunci / tidak boleh digunakan!”</p>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="glass-card sm:col-span-2 lg:col-span-3 rounded-2xl p-5 border-blue-500/40 hover:border-blue-500 transition">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xl">🤝</div>
+                        <h4 class="font-tech font-bold text-white text-base">TEAM CHALLENGE</h4>
+                    </div>
+                    <p class="text-xs text-gray-300">“Jelaskan langkah konversi secara lisan kepada teman sekelompokmu untuk klaim bonus +5 poin!”</p>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="navigateTo('menu')" class="px-6 py-2.5 rounded-xl bg-space-700 hover:bg-space-800 text-gray-300 font-semibold text-sm transition">
+                    🏠 Menu Utama
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= HALAMAN MENANG (VICTORY SCREEN) ================= -->
+        <section id="victoryScreen" class="hidden w-full py-6 text-center">
+            <div class="glass-card rounded-3xl p-8 max-w-2xl mx-auto border-neon-yellow shadow-glow-orange relative overflow-hidden">
+                <div class="text-6xl mb-3 animate-bounce">🎉</div>
+                <div class="inline-block px-4 py-1 rounded-full bg-neon-yellow/20 text-neon-yellow text-xs font-bold font-tech mb-2">
+                    GELAR TERTINGGI
+                </div>
+                <h2 class="font-tech text-3xl sm:text-4xl font-black text-white mb-1">MISI BERHASIL!</h2>
+                <h3 class="font-tech text-2xl font-bold text-neon-yellow mb-6">🏆 BINARY MASTER 🏆</h3>
+
+                <p class="text-gray-300 text-sm mb-6">Selamat! Kamu berhasil menyelesaikan seluruh misi konversi bilangan biner!</p>
+
+                <!-- Score Breakdown -->
+                <div class="bg-space-900/90 rounded-2xl p-5 border border-gray-700 mb-6 text-left space-y-2 text-xs sm:text-sm">
+                    <div class="flex justify-between items-center text-gray-300">
+                        <span>Level 1 — Susun Kartu:</span>
+                        <span class="font-tech font-bold text-neon-cyan">+30 POIN</span>
+                    </div>
+                    <div class="flex justify-between items-center text-gray-300">
+                        <span>Level 2 — Tebak Biner:</span>
+                        <span class="font-tech font-bold text-neon-purple">+60 POIN</span>
+                    </div>
+                    <div class="flex justify-between items-center text-gray-300">
+                        <span>Level 3 — Binary Battle:</span>
+                        <span class="font-tech font-bold text-neon-orange">+30 POIN</span>
+                    </div>
+                    <div class="flex justify-between items-center text-gray-300">
+                        <span>Bonus Tanpa Bantuan:</span>
+                        <span class="font-tech font-bold text-neon-green">+15 POIN</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-3 border-t border-gray-700 text-base font-bold">
+                        <span class="text-white">TOTAL SKOR AKHIR:</span>
+                        <span id="finalScoreText" class="font-tech text-2xl text-neon-yellow">135 POIN</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="navigateTo('reflection')" class="py-3 px-6 rounded-xl bg-neon-cyan hover:bg-cyan-400 text-space-900 font-tech font-bold text-sm shadow-glow-cyan transition">
+                        🚀 LANJUT KE REFLEKSI
+                    </button>
+                    <button onclick="navigateTo('menu')" class="py-3 px-6 rounded-xl bg-space-700 hover:bg-space-800 text-gray-300 font-semibold text-sm transition">
+                        🏠 MENU UTAMA
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= HALAMAN REFLEKSI ================= -->
+        <section id="reflectionScreen" class="hidden w-full py-4">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-3xl mx-auto border-neon-cyan/40 shadow-glow-cyan">
+                <div class="border-b border-gray-700 pb-4 mb-6">
+                    <h2 class="font-tech text-2xl md:text-3xl font-bold text-neon-cyan flex items-center space-x-2">
+                        <span>🧠 REFLEKSI MISI PEMBELAJARAN</span>
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-1">Evaluasi pemahaman dirimu setelah menyelesaikan tantangan</p>
+                </div>
+
+                <form id="reflectionForm" onsubmit="submitReflection(event)" class="space-y-5 text-xs sm:text-sm">
+                    <!-- Reflection Q1 -->
+                    <div>
+                        <label class="block font-bold text-white mb-2">1. Apa yang kamu pahami tentang bilangan biner?</label>
+                        <input type="text" required placeholder="Tuliskan jawaban singkat..." class="w-full p-3 rounded-xl bg-space-900 border border-gray-700 text-gray-200 focus:border-neon-cyan focus:outline-none">
+                    </div>
+
+                    <!-- Reflection Q2 & Q3 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-bold text-white mb-2">2. Cara mengubah desimal ke biner?</label>
+                            <input type="text" required placeholder="Contoh: Cari nilai kartu yang pas..." class="w-full p-3 rounded-xl bg-space-900 border border-gray-700 text-gray-200 focus:border-neon-cyan focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-white mb-2">3. Cara mengubah biner ke desimal?</label>
+                            <input type="text" required placeholder="Contoh: Jumlahkan kartu bernilai 1..." class="w-full p-3 rounded-xl bg-space-900 border border-gray-700 text-gray-200 focus:border-neon-cyan focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Reflection Rating -->
+                    <div>
+                        <label class="block font-bold text-white mb-2">4. Bagaimana tingkat kesulitan game ini bagi kamu?</label>
+                        <div class="grid grid-cols-3 gap-3 text-center">
+                            <label class="p-3 rounded-xl bg-space-900 border border-gray-700 cursor-pointer hover:border-neon-green transition">
+                                <input type="radio" name="difficulty" value="Easy" class="hidden peer" checked>
+                                <div class="peer-checked:text-neon-green font-bold">
+                                    <span class="text-2xl block mb-1">😊</span>
+                                    <span>Mudah</span>
+                                </div>
+                            </label>
+                            <label class="p-3 rounded-xl bg-space-900 border border-gray-700 cursor-pointer hover:border-neon-yellow transition">
+                                <input type="radio" name="difficulty" value="Medium" class="hidden peer">
+                                <div class="peer-checked:text-neon-yellow font-bold">
+                                    <span class="text-2xl block mb-1">😐</span>
+                                    <span>Cukup Sulit</span>
+                                </div>
+                            </label>
+                            <label class="p-3 rounded-xl bg-space-900 border border-gray-700 cursor-pointer hover:border-red-400 transition">
+                                <input type="radio" name="difficulty" value="Hard" class="hidden peer">
+                                <div class="peer-checked:text-red-400 font-bold">
+                                    <span class="text-2xl block mb-1">😵</span>
+                                    <span>Sulit</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Reflection Note -->
+                    <div>
+                        <label class="block font-bold text-white mb-2">Tuliskan hal paling berharga yang kamu pelajari hari ini:</label>
+                        <textarea rows="3" required placeholder="Catatan belajarku hari ini..." class="w-full p-3 rounded-xl bg-space-900 border border-gray-700 text-gray-200 focus:border-neon-cyan focus:outline-none"></textarea>
+                    </div>
+
+                    <div class="pt-4 flex justify-between items-center">
+                        <button type="button" onclick="navigateTo('menu')" class="px-5 py-2.5 rounded-xl bg-space-700 hover:bg-space-800 text-gray-300 font-semibold text-xs">
+                            🏠 Batal
+                        </button>
+                        <button type="submit" class="px-6 py-3 rounded-xl bg-neon-green hover:bg-green-500 text-space-900 font-tech font-bold text-sm shadow-glow-green transition">
+                            SIMPAN REFLEKSI & PAPAN SKOR 🏆
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= PAPAN SKOR (LEADERBOARD) ================= -->
+        <section id="leaderboardScreen" class="hidden w-full py-4">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center mb-6">
+                    <span class="text-xs font-tech font-bold text-neon-yellow uppercase">HALL OF FAME</span>
+                    <h2 class="font-tech text-3xl font-black text-white">🏆 PAPAN SKOR KELAS</h2>
+                    <p class="text-gray-400 text-xs md:text-sm mt-1">Daftar pencapaian nilai kelompok/siswa terbaik</p>
+                </div>
+
+                <div class="glass-card rounded-3xl p-6 border-neon-yellow/40 shadow-glow-orange mb-6">
+                    <div id="leaderboardList" class="space-y-3">
+                        <!-- Dynamic Leaderboard Items injected by JS -->
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button onclick="navigateTo('menu')" class="px-5 py-2.5 rounded-xl bg-space-700 hover:bg-space-800 text-gray-300 font-semibold text-xs transition">
+                        🏠 Menu Utama
+                    </button>
+                    <button onclick="navigateTo('level1')" class="px-6 py-2.5 rounded-xl bg-neon-yellow hover:bg-yellow-400 text-space-900 font-tech font-bold text-xs transition">
+                        🎮 MAIN LAGI
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PENGATURAN (SETTINGS) ================= -->
+        <section id="settingsScreen" class="hidden w-full py-4">
+            <div class="max-w-xl mx-auto glass-card rounded-3xl p-6 border-gray-700">
+                <h2 class="font-tech text-2xl font-bold text-white mb-6 flex items-center space-x-2">
+                    <span>⚙️ PENGATURAN GAME</span>
+                </h2>
+
+                <div class="space-y-5 text-xs sm:text-sm">
+                    <div>
+                        <label class="block font-bold text-gray-300 mb-2">Nama Kelompok / Siswa:</label>
+                        <input type="text" id="settingPlayerName" class="w-full p-3 rounded-xl bg-space-900 border border-gray-700 text-neon-cyan font-bold font-tech focus:border-neon-cyan focus:outline-none">
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-space-900 rounded-xl border border-gray-700">
+                        <div>
+                            <div class="font-bold text-white">Efek Suara Audio</div>
+                            <div class="text-xs text-gray-400">Aktifkan atau matikan suara synthesizer</div>
+                        </div>
+                        <input type="checkbox" id="settingAudioToggle" onchange="toggleAudio()" checked class="w-5 h-5 accent-neon-cyan cursor-pointer">
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-800 flex justify-between">
+                        <button onclick="resetGameData()" class="px-4 py-2 rounded-xl bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500/30 text-xs font-bold transition">
+                            🗑️ Reset Skor & Data
+                        </button>
+                        <button onclick="saveSettings()" class="px-6 py-2 rounded-xl bg-neon-cyan text-space-900 font-tech font-bold text-xs hover:bg-cyan-300 transition">
+                            SIMPAN
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Bantuan Modal Dialog -->
+    <div id="helpModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-space-900/80 backdrop-blur-sm">
+        <div class="glass-card rounded-3xl p-6 max-w-md w-full border-neon-yellow shadow-glow-orange">
+            <h3 class="font-tech text-xl font-bold text-neon-yellow mb-2 flex items-center space-x-2">
+                <span>💡 BANTUAN KONVERSI</span>
+            </h3>
+            <div id="helpModalBody" class="text-xs sm:text-sm text-gray-200 space-y-2 mb-6 leading-relaxed">
+                <!-- Hint injected dynamically -->
+            </div>
+            <button onclick="closeHelpModal()" class="w-full py-2.5 rounded-xl bg-neon-yellow text-space-900 font-tech font-bold text-xs hover:bg-yellow-400 transition">
+                SAYA PAHAM
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-6xl mx-auto px-4 py-4 text-center text-xs text-gray-400 border-t border-gray-800/50 mt-4">
+        <p>BINARY MISSION 🚀 &bull; Media Pembelajaran Interaktif Informatika SMP Kelas 8 &bull; Kurikulum Merdeka</p>
+    </footer>
+
+    <script>
+        /* ================= GAME STATE MANAGEMENT ================= */
+        const BIT_VALUES = [128, 64, 32, 16, 8, 4, 2, 1];
+
+        let state = {
+            playerName: "Kelompok 1",
+            score: 0,
+            soundEnabled: true,
+            currentScreen: "splash",
+            
+            // Sandbox State
+            sandboxCards: [false, false, false, false, false, false, false, false],
+
+            // Level 1 State
+            l1Index: 0,
+            l1Questions: [
+                { target: 13, hint: "Pilih kartu 8, 4, dan 1 (8 + 4 + 1 = 13)" },
+                { target: 45, hint: "Pilih kartu 32, 8, 4, dan 1 (32 + 8 + 4 + 1 = 45)" },
+                { target: 100, hint: "Pilih kartu 64, 32, dan 4 (64 + 32 + 4 = 100)" }
+            ],
+            l1Cards: [false, false, false, false, false, false, false, false],
+
+            // Level 2 State
+            l2Index: 0,
+            l2Questions: [
+                { binary: "101101", targetDecimal: 45, breakdown: "32 + 8 + 4 + 1 = 45" },
+                { binary: "00011100", targetDecimal: 28, breakdown: "16 + 8 + 4 = 28" },
+                { binary: "01000001", targetDecimal: 65, breakdown: "64 + 1 = 65" }
+            ],
+
+            // Level 3 State
+            l3Target: 73,
+            l3Cards: [false, false, false, false, false, false, false, false],
+            l3Timer: 30,
+            l3TimerInterval: null,
+
+            // Leaderboard
+            leaderboard: [
+                { name: "Kelompok 3", score: 180, badge: "🥇" },
+                { name: "Kelompok 1", score: 160, badge: "🥈" },
+                { name: "Kelompok 5", score: 130, badge: "🥉" },
+                { name: "Kelompok 2", score: 120, badge: "4" },
+                { name: "Kelompok 4", score: 90, badge: "5" }
+            ]
+        };
+
+        /* Web Audio API Synthesizer for SFX */
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.setValueAtTime(150, now + 0.1);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'win') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.4);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                }
+            } catch (e) {
+                console.log("Audio play blocked", e);
+            }
+        }
+
+        function toggleAudio() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('audioIcon');
+            const checkbox = document.getElementById('settingAudioToggle');
+            if (state.soundEnabled) {
+                icon.className = "fa-solid fa-volume-high text-lg text-neon-cyan";
+                if(checkbox) checkbox.checked = true;
+                playSound('click');
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-lg text-gray-500";
+                if(checkbox) checkbox.checked = false;
+            }
+        }
+
+        function navigateTo(screenId) {
+            playSound('click');
+            state.currentScreen = screenId;
+
+            // Hide all screens
+            const screens = ['splashScreen', 'menuScreen', 'tutorialScreen', 'sandboxScreen', 'level1Screen', 'level2Screen', 'level3Screen', 'challengesScreen', 'victoryScreen', 'reflectionScreen', 'leaderboardScreen', 'settingsScreen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+
+            // Stop level 3 timer if navigating away
+            if (screenId !== 'level3Screen' && state.l3TimerInterval) {
+                clearInterval(state.l3TimerInterval);
+            }
+
+            // Show selected screen
+            const target = document.getElementById(screenId + 'Screen');
+            if (target) {
+                target.classList.remove('hidden');
+            }
+
+            // Toggle Header Elements
+            const topScoreContainer = document.getElementById('topScoreContainer');
+            const homeNavBtn = document.getElementById('homeNavBtn');
+            
+            if (screenId === 'splash') {
+                topScoreContainer.classList.add('hidden');
+                homeNavBtn.classList.add('hidden');
+            } else {
+                topScoreContainer.classList.remove('hidden');
+                homeNavBtn.classList.remove('hidden');
+            }
+
+            // Initialize specific screens
+            if (screenId === 'sandbox') initSandbox();
+            if (screenId === 'level1') initLevel1();
+            if (screenId === 'level2') initLevel2();
+            if (screenId === 'level3') initLevel3();
+            if (screenId === 'leaderboard') renderLeaderboard();
+            if (screenId === 'settings') {
+                document.getElementById('settingPlayerName').value = state.playerName;
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startGameSequence() {
+            navigateTo('menu');
+        }
+
+        function updateGlobalScore(points) {
+            state.score += points;
+            document.getElementById('globalScoreText').innerText = state.score;
+        }
+
+        function initSandbox() {
+            renderSandboxCards();
+        }
+
+        function toggleSandboxCard(index) {
+            playSound('click');
+            state.sandboxCards[index] = !state.sandboxCards[index];
+            renderSandboxCards();
+        }
+
+        function renderSandboxCards() {
+            const container = document.getElementById('sandboxCardsContainer');
+            container.innerHTML = '';
+
+            let sumDecimal = 0;
+            let binaryStr = '';
+            let formulaParts = [];
+
+            BIT_VALUES.forEach((val, idx) => {
+                const isActive = state.sandboxCards[idx];
+                if (isActive) {
+                    sumDecimal += val;
+                    binaryStr += '1';
+                    formulaParts.push(val);
+                } else {
+                    binaryStr += '0';
+                }
+
+                const cardEl = document.createElement('div');
+                cardEl.onclick = () => toggleSandboxCard(idx);
+                cardEl.className = `cursor-pointer rounded-2xl p-3 sm:p-4 text-center border-2 transition duration-200 select-none flex flex-col justify-between h-28 sm:h-32 ${
+                    isActive 
+                    ? 'bg-gradient-to-b from-neon-green/30 to-space-800 border-neon-green shadow-glow-green scale-105' 
+                    : 'bg-space-800/80 border-gray-700 hover:border-gray-500 opacity-60'
+                }`;
+
+                cardEl.innerHTML = `
+                    <span class="font-tech text-xs font-bold ${isActive ? 'text-neon-green' : 'text-gray-400'}">${val}</span>
+                    <span class="font-tech text-2xl sm:text-3xl font-black ${isActive ? 'text-neon-green' : 'text-gray-500'} my-auto">${isActive ? '1' : '0'}</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider ${isActive ? 'text-neon-green' : 'text-gray-500'}">${isActive ? 'AKTIF' : 'OFF'}</span>
+                `;
+                container.appendChild(cardEl);
+            });
+
+            document.getElementById('sandboxDecimalText').innerText = sumDecimal;
+            document.getElementById('sandboxBinaryText').innerText = binaryStr;
+
+            const breakdownEl = document.getElementById('sandboxMathBreakdown');
+            if (formulaParts.length > 0) {
+                breakdownEl.innerText = formulaParts.join(' + ') + ' = ' + sumDecimal;
+            } else {
+                breakdownEl.innerText = 'Semua kartu tidak aktif: 0';
+            }
+        }
+
+        function initLevel1() {
+            state.l1Cards = [false, false, false, false, false, false, false, false];
+            const currentQ = state.l1Questions[state.l1Index];
+            document.getElementById('l1TargetNumber').innerText = currentQ.target;
+            document.getElementById('l1QuestionIndex').innerText = state.l1Index + 1;
+            document.getElementById('l1FeedbackBox').classList.add('hidden');
+            renderLevel1Cards();
+        }
+
+        function toggleLevel1Card(index) {
+            playSound('click');
+            state.l1Cards[index] = !state.l1Cards[index];
+            renderLevel1Cards();
+        }
+
+        function resetLevel1Cards() {
+            playSound('click');
+            state.l1Cards = [false, false, false, false, false, false, false, false];
+            renderLevel1Cards();
+        }
+
+        function renderLevel1Cards() {
+            const container = document.getElementById('l1CardsContainer');
+            container.innerHTML = '';
+
+            let currentSum = 0;
+            let binaryStr = '';
+            let selectedListHTML = '';
+            let formulaArr = [];
+
+            BIT_VALUES.forEach((val, idx) => {
+                const isActive = state.l1Cards[idx];
+                if (isActive) {
+                    currentSum += val;
+                    binaryStr += '1';
+                    formulaArr.push(val);
+                    selectedListHTML += `<span class="px-2 py-1 rounded bg-neon-cyan/20 border border-neon-cyan text-neon-cyan">[ ${val} ]</span> `;
+                } else {
+                    binaryStr += '0';
+                }
+
+                const cardEl = document.createElement('div');
+                cardEl.onclick = () => toggleLevel1Card(idx);
+                cardEl.className = `cursor-pointer rounded-2xl p-3 sm:p-4 text-center border-2 transition duration-200 select-none flex flex-col justify-between h-28 sm:h-32 ${
+                    isActive 
+                    ? 'bg-gradient-to-b from-neon-cyan/30 to-space-800 border-neon-cyan shadow-glow-cyan scale-105' 
+                    : 'bg-space-800/80 border-gray-700 hover:border-gray-500 opacity-60'
+                }`;
+
+                cardEl.innerHTML = `
+                    <span class="font-tech text-xs font-bold ${isActive ? 'text-neon-cyan' : 'text-gray-400'}">${val}</span>
+                    <span class="font-tech text-2xl sm:text-3xl font-black ${isActive ? 'text-neon-cyan' : 'text-gray-500'} my-auto">${isActive ? '1' : '0'}</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider ${isActive ? 'text-neon-cyan' : 'text-gray-500'}">${isActive ? 'AKTIF' : 'OFF'}</span>
+                `;
+                container.appendChild(cardEl);
+            });
+
+            document.getElementById('l1SelectedCardsList').innerHTML = selectedListHTML || '<span class="text-gray-500 font-normal">Belum ada kartu dipilih</span>';
+            document.getElementById('l1SumFormula').innerText = formulaArr.length > 0 ? `${formulaArr.join(' + ')} = ${currentSum}` : '0 = 0';
+            document.getElementById('l1BinaryOutput').innerText = binaryStr;
+        }
+
+        function showHelpModalLevel1() {
+            playSound('click');
+            const hint = state.l1Questions[state.l1Index].hint;
+            document.getElementById('helpModalBody').innerHTML = `
+                <p>Misi kamu adalah mencari jumlah kombinasi kartu biner yang pas untuk menghasilkan desimal target.</p>
+                <div class="p-3 bg-space-900 rounded-xl border border-neon-yellow text-neon-yellow font-bold my-2">
+                    💡 Petunjuk: ${hint}
+                </div>
+            `;
+            document.getElementById('helpModal').classList.remove('hidden');
+        }
+
+        function closeHelpModal() {
+            playSound('click');
+            document.getElementById('helpModal').classList.add('hidden');
+        }
+
+        function checkLevel1Answer() {
+            let currentSum = 0;
+            let binaryStr = '';
+            let formulaArr = [];
+
+            BIT_VALUES.forEach((val, idx) => {
+                if (state.l1Cards[idx]) {
+                    currentSum += val;
+                    binaryStr += '1';
+                    formulaArr.push(val);
+                } else {
+                    binaryStr += '0';
+                }
+            });
+
+            const target = state.l1Questions[state.l1Index].target;
+            const feedbackBox = document.getElementById('l1FeedbackBox');
+            feedbackBox.classList.remove('hidden');
+
+            if (currentSum === target) {
+                playSound('correct');
+                updateGlobalScore(10);
+                document.getElementById('l1FeedbackTitle').innerText = "🎉 BENAR!";
+                document.getElementById('l1FeedbackTitle').className = "font-bold text-lg text-neon-green";
+                document.getElementById('l1FeedbackBody').innerHTML = `
+                    ${target} = ${formulaArr.join(' + ')}<br>
+                    Jadi bilangan binernya adalah <span class="text-neon-cyan font-bold">${binaryStr}</span>.
+                `;
+                feedbackBox.className = "glass-card rounded-2xl p-5 border-neon-green bg-neon-green/10 mb-6";
+            } else {
+                playSound('wrong');
+                document.getElementById('l1FeedbackTitle').innerText = "❌ BELUM TEPAT";
+                document.getElementById('l1FeedbackTitle').className = "font-bold text-lg text-red-400";
+                document.getElementById('l1FeedbackBody').innerHTML = `
+                    Total saat ini = ${currentSum}. Target desimal adalah ${target}. Cobalah sesuaikan pilihan kartumu kembali!
+                `;
+                feedbackBox.className = "glass-card rounded-2xl p-5 border-red-500 bg-red-500/10 mb-6";
+            }
+        }
+
+        function nextLevel1Question() {
+            if (state.l1Index < state.l1Questions.length - 1) {
+                state.l1Index++;
+                initLevel1();
+            } else {
+                navigateTo('level2');
+            }
+        }
+
+        function initLevel2() {
+            const currentQ = state.l2Questions[state.l2Index];
+            document.getElementById('l2BinaryTarget').innerText = currentQ.binary;
+            document.getElementById('l2QuestionIndex').innerText = state.l2Index + 1;
+            document.getElementById('l2InputAnswer').value = '';
+            document.getElementById('l2FeedbackBox').classList.add('hidden');
+        }
+
+        function toggleL2HelperCards() {
+            playSound('click');
+            const box = document.getElementById('l2HelperCardsBox');
+            box.classList.toggle('hidden');
+        }
+
+        function checkLevel2Answer() {
+            const currentQ = state.l2Questions[state.l2Index];
+            const userAns = parseInt(document.getElementById('l2InputAnswer').value.trim());
+            const feedbackBox = document.getElementById('l2FeedbackBox');
+            feedbackBox.classList.remove('hidden');
+
+            if (userAns === currentQ.targetDecimal) {
+                playSound('correct');
+                updateGlobalScore(20);
+                document.getElementById('l2FeedbackTitle').innerText = "🎉 HEBAT!";
+                document.getElementById('l2FeedbackTitle').className = "font-bold text-lg text-neon-purple";
+                document.getElementById('l2FeedbackBody').innerHTML = `
+                    Pembahasan Konversi:<br>
+                    ${currentQ.breakdown}<br>
+                    Maka kode biner <span class="text-neon-cyan font-bold">${currentQ.binary}</span> = <span class="text-neon-yellow font-bold">${currentQ.targetDecimal}</span>.
+                `;
+                feedbackBox.className = "glass-card rounded-2xl p-5 border-neon-purple bg-neon-purple/10 mb-6";
+            } else {
+                playSound('wrong');
+                document.getElementById('l2FeedbackTitle').innerText = "❌ KURANG TEPAT";
+                document.getElementById('l2FeedbackTitle').className = "font-bold text-lg text-red-400";
+                document.getElementById('l2FeedbackBody').innerText = `Jawaban kamu ${userAns || 0}. Gunakan bantuan referensi kartu biner untuk menghitung kembali!`;
+                feedbackBox.className = "glass-card rounded-2xl p-5 border-red-500 bg-red-500/10 mb-6";
+            }
+        }
+
+        function nextLevel2Question() {
+            if (state.l2Index < state.l2Questions.length - 1) {
+                state.l2Index++;
+                initLevel2();
+            } else {
+                navigateTo('level3');
+            }
+        }
+
+        function initLevel3() {
+            state.l3Cards = [false, false, false, false, false, false, false, false];
+            state.l3Timer = 30;
+            document.getElementById('l3TargetNumber').innerText = state.l3Target;
+            renderLevel3Cards();
+            startLevel3Battle();
+        }
+
+        function startLevel3Battle() {
+            if (state.l3TimerInterval) clearInterval(state.l3TimerInterval);
+            state.l3Timer = 30;
+            document.getElementById('l3TimerText').innerText = `${state.l3Timer}S`;
+            
+            state.l3TimerInterval = setInterval(() => {
+                state.l3Timer--;
+                document.getElementById('l3TimerText').innerText = `${state.l3Timer}S`;
+                
+                // Update Progress visual
+                const progressPct = Math.max(0, Math.floor((state.l3Timer / 30) * 100));
+                document.getElementById('l3ProgressBar').style.width = `${progressPct}%`;
+                document.getElementById('l3ProgressText').innerText = `${progressPct}% WAKTU TERSISA`;
+
+                if (state.l3Timer <= 0) {
+                    clearInterval(state.l3TimerInterval);
+                    playSound('wrong');
+                    alert("⏱️ Waktu Habis! Coba lagi Level 3!");
+                    startLevel3Battle();
+                }
+            }, 1000);
+        }
+
+        function toggleLevel3Card(index) {
+            playSound('click');
+            state.l3Cards[index] = !state.l3Cards[index];
+            renderLevel3Cards();
+        }
+
+        function renderLevel3Cards() {
+            const container = document.getElementById('l3CardsContainer');
+            container.innerHTML = '';
+
+            let currentSum = 0;
+            let binaryStr = '';
+            let formulaArr = [];
+
+            BIT_VALUES.forEach((val, idx) => {
+                const isActive = state.l3Cards[idx];
+                if (isActive) {
+                    currentSum += val;
+                    binaryStr += '1';
+                    formulaArr.push(val);
+                } else {
+                    binaryStr += '0';
+                }
+
+                const cardEl = document.createElement('div');
+                cardEl.onclick = () => toggleLevel3Card(idx);
+                cardEl.className = `cursor-pointer rounded-2xl p-3 sm:p-4 text-center border-2 transition duration-200 select-none flex flex-col justify-between h-28 sm:h-32 ${
+                    isActive 
+                    ? 'bg-gradient-to-b from-neon-orange/40 to-space-800 border-neon-orange shadow-glow-orange scale-105' 
+                    : 'bg-space-800/80 border-gray-700 hover:border-gray-500 opacity-60'
+                }`;
+
+                cardEl.innerHTML = `
+                    <span class="font-tech text-xs font-bold ${isActive ? 'text-neon-orange' : 'text-gray-400'}">${val}</span>
+                    <span class="font-tech text-2xl sm:text-3xl font-black ${isActive ? 'text-neon-orange' : 'text-gray-500'} my-auto">${isActive ? '1' : '0'}</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider ${isActive ? 'text-neon-orange' : 'text-gray-500'}">${isActive ? 'AKTIF' : 'OFF'}</span>
+                `;
+                container.appendChild(cardEl);
+            });
+
+            document.getElementById('l3SumFormula').innerText = formulaArr.length > 0 ? `${formulaArr.join(' + ')} = ${currentSum}` : '0 = 0';
+            document.getElementById('l3BinaryOutput').innerText = binaryStr;
+        }
+
+        function checkLevel3Answer() {
+            let currentSum = 0;
+            BIT_VALUES.forEach((val, idx) => {
+                if (state.l3Cards[idx]) currentSum += val;
+            });
+
+            if (currentSum === state.l3Target) {
+                clearInterval(state.l3TimerInterval);
+                playSound('win');
+                updateGlobalScore(30);
+                
+                // Trigger celebratory Confetti
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 120,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                }
+
+                document.getElementById('finalScoreText').innerText = `${state.score} POIN`;
+                navigateTo('victory');
+            } else {
+                playSound('wrong');
+                alert(`Jawaban belum tepat! Total pilihanmu ${currentSum}, target adalah ${state.l3Target}`);
+            }
+        }
+
+        function submitReflection(event) {
+            event.preventDefault();
+            playSound('correct');
+
+            // Add player to leaderboard
+            state.leaderboard.push({
+                name: state.playerName,
+                score: state.score,
+                badge: "⭐"
+            });
+
+            // Sort descending
+            state.leaderboard.sort((a, b) => b.score - a.score);
+
+            navigateTo('leaderboard');
+        }
+
+        function renderLeaderboard() {
+            const container = document.getElementById('leaderboardList');
+            container.innerHTML = '';
+
+            state.leaderboard.forEach((item, index) => {
+                const isCurrent = item.name === state.playerName;
+                const row = document.createElement('div');
+                row.className = `flex items-center justify-between p-4 rounded-2xl border transition ${
+                    isCurrent 
+                    ? 'bg-neon-yellow/10 border-neon-yellow shadow-glow-orange' 
+                    : 'bg-space-900/80 border-gray-800'
+                }`;
+
+                row.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="font-tech text-lg font-black text-neon-yellow w-8">${item.badge || (index + 1)}</span>
+                        <span class="font-bold text-sm sm:text-base ${isCurrent ? 'text-neon-yellow' : 'text-white'}">${item.name}</span>
+                    </div>
+                    <span class="font-tech font-extrabold text-neon-cyan text-base">${item.score} POIN</span>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        /* Settings Logic */
+        function saveSettings() {
+            playSound('click');
+            const newName = document.getElementById('settingPlayerName').value.trim();
+            if (newName) state.playerName = newName;
+            alert("Pengaturan tersimpan!");
+            navigateTo('menu');
+        }
+
+        function resetGameData() {
+            playSound('click');
+            if (confirm("Apakah Anda yakin ingin mereset skor dan data permainan?")) {
+                state.score = 0;
+                document.getElementById('globalScoreText').innerText = 0;
+                state.l1Index = 0;
+                state.l2Index = 0;
+                alert("Data berhasil direset.");
+                navigateTo('menu');
+            }
+        }
+
+        window.onload = function() {
+            console.log("Binary Mission initialized!");
+        }
+    </script>
+</body>
+</html>
